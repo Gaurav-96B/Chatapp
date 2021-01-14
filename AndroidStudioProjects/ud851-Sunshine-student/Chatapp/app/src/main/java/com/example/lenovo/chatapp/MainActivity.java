@@ -35,7 +35,8 @@ private EditText editMessage;
     private DatabaseReference mDatabaseUsers;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(Bundle savedInstanceState) 
+    {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         editMessage = (EditText) findViewById(R.id.editmessage);
@@ -46,39 +47,49 @@ private EditText editMessage;
         linearLayoutManager.setStackFromEnd(true);
         mMessageList.setLayoutManager(linearLayoutManager);
         mAuth = FirebaseAuth.getInstance();
-        mAuthlistener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                if(firebaseAuth.getCurrentUser()== null){
+        mAuthlistener = new FirebaseAuth.AuthStateListener() 
+        { 
+            @Override 
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) 
+            {
+                if(firebaseAuth.getCurrentUser()== null)
+                {
                     startActivity(new Intent(MainActivity.this,RegisterActivity.class));
                 }
             }
         };
     }
-    public void sendButtonClicked(View view){
+    public void sendButtonClicked(View view)
+    {
         mCurrentUser = mAuth.getCurrentUser();
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("Users").child(mCurrentUser.getUid());
         final String messagevalue = editMessage.getText().toString().trim();
         final Date time = Calendar.getInstance().getTime();
-        if(!TextUtils.isEmpty(messagevalue)){
+        if(!TextUtils.isEmpty(messagevalue))
+        {
             final DatabaseReference newPost = mDatabase.push();
             newPost.child("content").setValue(messagevalue);
             newPost.child("time").setValue(time);
-            mDatabaseUsers.addValueEventListener(new ValueEventListener() {
+            mDatabaseUsers.addValueEventListener(new ValueEventListener() 
+           {
                 @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
+                public void onDataChange(DataSnapshot dataSnapshot) 
+                {
                 newPost.child("content").setValue(messagevalue);
                     newPost.child("time").setValue(time);
-                    newPost.child("username").setValue(dataSnapshot.child("Name").getValue()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    newPost.child("username").setValue(dataSnapshot.child("Name").getValue()).addOnCompleteListener(new OnCompleteListener<Void>() 
+                    {
                         @Override
-                        public void onComplete(@NonNull Task<Void> task) {
+                        public void onComplete(@NonNull Task<Void> task) 
+                     {
 
                         }
                     });
                 }
 
                 @Override
-                public void onCancelled(DatabaseError databaseError) {
+                public void onCancelled(DatabaseError databaseError) 
+                {
 
                 }
             });
@@ -91,14 +102,11 @@ private EditText editMessage;
     protected void onStart() {
         super.onStart();
         mAuth.addAuthStateListener(mAuthlistener);
-        FirebaseRecyclerAdapter <Message,MessageViewHolder> FBRA = new FirebaseRecyclerAdapter<Message, MessageViewHolder>(
-                Message.class,
-                R.layout.singlemessagelayout,
-                MessageViewHolder.class,
-                mDatabase
-        ) {
+        FirebaseRecyclerAdapter <Message,MessageViewHolder> FBRA = new FirebaseRecyclerAdapter<Message, MessageViewHolder>(Message.class,R.layout.singlemessagelayout,MessageViewHolder.class,mDatabase) 
+        {
             @Override
-            protected void populateViewHolder(MessageViewHolder viewHolder, Message model, int position) {
+            protected void populateViewHolder(MessageViewHolder viewHolder, Message model, int position) 
+            {
              viewHolder.setContent(model.getContent());
                 viewHolder.setUsername(model.getUsername());
                 viewHolder.setTime(Calendar.getInstance().getTime());
@@ -107,7 +115,8 @@ private EditText editMessage;
         mMessageList.setAdapter(FBRA);
     }
 
-    public static class MessageViewHolder extends RecyclerView.ViewHolder {
+    public static class MessageViewHolder extends RecyclerView.ViewHolder 
+    {
         View mView;
         public MessageViewHolder(View itemView) {
             super(itemView);
